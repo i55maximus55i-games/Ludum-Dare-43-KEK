@@ -1,0 +1,26 @@
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+eclipse.project.name = appName + '-core'
+
+dependencies {
+  compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+  compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+  compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+  compile "com.badlogicgames.box2dlights:box2dlights:$box2dlightsVersion"
+  compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
+  compile "io.github.libktx:ktx-scene2d:$ktxScene2DVersion"
+  compile "io.github.libktx:ktx-assets:$ktxAssetsVersion"
+  compile "io.github.libktx:ktx-async:$ktxAsyncVersion"
+  compile "de.tomgrill.gdxdialogs:gdx-dialogs-core:$dialogsVersion"
+  compile "io.github.libktx:ktx-box2d:$ktxBox2dVersion"
+  compile "io.github.libktx:ktx-collections:$ktxCollectionsVersion"
+  compile "io.github.libktx:ktx-log:$ktxLogVersion"
+  compile "io.github.libktx:ktx-math:$ktxMathVersion"
+  compile "io.github.libktx:ktx-actors:$ktxActorsVersion"
+  compile "com.badlogicgames.ashley:ashley:$ashleyVersion"
+  compile "io.github.libktx:ktx-ashley:$ktxAshleyVersion"
+  compile "io.github.libktx:ktx-style:$ktxStyleVersion"
+  compile "io.github.libktx:ktx-i18n:$ktxI18nVersion"
+  compile "io.github.libktx:ktx-app:$ktxAppVersion"
+  compile "io.github.libktx:ktx-inject:$ktxInjectVersion"
+}
+        
