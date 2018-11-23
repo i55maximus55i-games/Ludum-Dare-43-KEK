@@ -8,16 +8,19 @@ import ru.fierylynx.old43.Main;
 /** Launches the desktop (LWJGL) application. */
 public class DesktopLauncher {
     public static void main(String[] args) {
+        LwjglApplicationConfiguration cfg = getDefaultConfiguration();
         boolean debug = false;
         for (String arg : args) {
             if (arg.equals("-debug"))
                 debug = true;
+            if (arg.contains("-w"))
+                cfg.width = Integer.parseInt(arg.substring(2));
+            if (arg.contains("-h"))
+                cfg.height = Integer.parseInt(arg.substring(2));
+            if (arg.equals("-f"))
+                cfg.fullscreen = true;
         }
-        createApplication(debug);
-    }
-
-    private static LwjglApplication createApplication(boolean isDebug) {
-        return new LwjglApplication(new Main(isDebug), getDefaultConfiguration());
+        new LwjglApplication(new Main(debug), cfg);
     }
 
     private static LwjglApplicationConfiguration getDefaultConfiguration() {

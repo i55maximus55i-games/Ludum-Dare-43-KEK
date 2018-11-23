@@ -12,9 +12,16 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.*
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.badlogic.gdx.utils.viewport.Viewport
+import com.github.sarxos.webcam.Webcam
+import com.github.sarxos.webcam.WebcamResolution
 import ktx.app.KtxScreen
 import ktx.app.clearScreen
 import ktx.app.use
+import java.awt.Dimension
+import java.awt.image.BufferedImage
+import java.io.File
+import java.util.*
+import javax.imageio.ImageIO
 
 class GameScreen : KtxScreen {
     private val scale = 16f
@@ -31,6 +38,10 @@ class GameScreen : KtxScreen {
 
     private lateinit var player: Player
 
+    var num = 0
+    var score = 1
+    lateinit var img : BufferedImage
+
     override fun show() {
         map = TmxMapLoader().load("map.tmx")
         mapRenderer = OrthogonalTiledMapRenderer(map)
@@ -44,6 +55,26 @@ class GameScreen : KtxScreen {
         camera.setToOrtho(false)
         batch = SpriteBatch()
         viewport = ScreenViewport(camera)
+
+
+        val file = Gdx.files.local("you.txt")
+        if (file.exists()) {
+            val scanner = Scanner(file.read())
+            num = scanner.nextInt()
+        }
+
+        val nonStandardResolutions = arrayOf<Dimension>(
+                WebcamResolution.PAL.size,
+                WebcamResolution.HD.size,
+                WebcamResolution.SXGA.size,
+                WebcamResolution.HVGA.size
+        )
+        val webcam = Webcam.getDefault()
+        webcam.setCustomViewSizes(*nonStandardResolutions)
+        webcam.viewSize = WebcamResolution.SXGA.size
+        webcam.open()
+        img = webcam.image
+        webcam.close()
     }
 
     private fun createWalls() {
@@ -109,5 +140,16 @@ class GameScreen : KtxScreen {
         viewport.update(width, height)
         camera.viewportWidth = scale * width / height
         camera.viewportHeight = scale
+    }
+
+    override fun dispose() {
+        ImageIO.write(img, "png", File("$num.png"))
+        num++
+        var file = Gdx.files.local("you.txt")
+        file.writeString(num.toString(), false)
+
+        file = Gdx.files.local("tries.txt")
+        file.writeString("$score\n",true)
+
     }
 }

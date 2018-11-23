@@ -51,7 +51,7 @@ class Main(val isDebug : Boolean) : Game() {
         stage = Stage(ScreenViewport())
         createStage()
         shapeRenderer = ShapeRenderer()
-        setScreen(GameScreen())
+        setScreen(MainMenuScreen())
     }
 
     private fun createStage() {
@@ -97,6 +97,7 @@ class Main(val isDebug : Boolean) : Game() {
             }
             shapeRenderer.end()
             if (blickTimer > blickTime && isChangeScreen) {
+                screen.dispose()
                 screen = changeScreen
                 screen.show()
                 screen.resize(Gdx.graphics.width, Gdx.graphics.height)
