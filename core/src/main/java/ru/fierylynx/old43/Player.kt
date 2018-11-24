@@ -5,8 +5,10 @@ import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.*
+import com.badlogic.gdx.utils.Disposable
 
-class Player(world: World, position: Vector2, private val scale: Float) {
+class Player(world: World, position: Vector2, private val scale: Float) : Disposable{
+
     var body: Body
 
     private val jumpMaxCount = 2
@@ -78,5 +80,9 @@ class Player(world: World, position: Vector2, private val scale: Float) {
 
     fun draw(batch: SpriteBatch) {
         anim.draw(body.position.x * scale - width / 2, body.position.y * scale - height / 2, "lol", timer, batch, 1f)
+    }
+
+    override fun dispose() {
+        anim.dispose()
     }
 }

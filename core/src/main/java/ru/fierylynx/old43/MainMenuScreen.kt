@@ -17,7 +17,6 @@ import kotlin.collections.ArrayList
 
 class MainMenuScreen : KtxScreen {
 
-
     lateinit var texture1 : Texture
     lateinit var texture2 : Texture
     lateinit var texture3 : Texture

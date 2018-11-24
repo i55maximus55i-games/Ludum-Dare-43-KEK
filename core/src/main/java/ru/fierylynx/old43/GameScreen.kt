@@ -1,7 +1,11 @@
 package ru.fierylynx.old43
 
+import box2dLight.Light
+import box2dLight.PointLight
+import box2dLight.RayHandler
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.maps.objects.RectangleMapObject
@@ -35,12 +39,14 @@ class GameScreen : KtxScreen {
 
     private lateinit var world: World
     private lateinit var debugRenderer: Box2DDebugRenderer
+    private lateinit var rayHandler: RayHandler
 
     private lateinit var player: Player
 
     var num = 0
     var score = 1
     lateinit var img : BufferedImage
+    lateinit var light: PointLight
 
     override fun show() {
         map = TmxMapLoader().load("map.tmx")
@@ -48,14 +54,21 @@ class GameScreen : KtxScreen {
 
         world = World(Vector2(0f, -9.8f), true)
         debugRenderer = Box2DDebugRenderer()
+        rayHandler = RayHandler(world).apply {
+            setAmbientLight(0.1f)
+        }
+
         createWalls()
         player = Player(world, Vector2(16f, 32f), scale)
+        light = PointLight(rayHandler, 1000).apply {
+            attachToBody(player.body)
+            distance = 6f
+        }
 
         camera = OrthographicCamera()
         camera.setToOrtho(false)
         batch = SpriteBatch()
         viewport = ScreenViewport(camera)
-
 
         val file = Gdx.files.local("you.txt")
         if (file.exists()) {
@@ -114,12 +127,20 @@ class GameScreen : KtxScreen {
         batch.projectionMatrix = camera.combined
         mapRenderer.setView(camera)
 
-
         clearScreen(0f, 0.84f, 1f, 1f)
         mapRenderer.render()
         batch.use {
             player.draw(batch)
         }
+        camera.zoom /= scale
+        camera.position.x /= scale
+        camera.position.y /= scale
+        camera.update()
+        rayHandler.setCombinedMatrix(camera)
+        rayHandler.updateAndRender()
+        camera.zoom *= scale
+        camera.position.x *= scale
+        camera.position.y *= scale
 
         if (Main.debug) {
             camera.zoom /= scale
@@ -137,6 +158,8 @@ class GameScreen : KtxScreen {
         super.resize(width, height)
         val scale = 196f
 
+        rayHandler.resizeFBO(width * 4, height * 4)
+
         viewport.update(width, height)
         camera.viewportWidth = scale * width / height
         camera.viewportHeight = scale
@@ -150,6 +173,14 @@ class GameScreen : KtxScreen {
 
         file = Gdx.files.local("tries.txt")
         file.writeString("$score\n",true)
+
+        map.dispose()
+        mapRenderer.dispose()
+        batch.dispose()
+        world.dispose()
+        debugRenderer.dispose()
+        rayHandler.dispose()
+        player.dispose()
     }
 
 }
