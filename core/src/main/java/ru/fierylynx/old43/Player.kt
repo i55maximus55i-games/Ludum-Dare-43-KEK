@@ -3,11 +3,12 @@ package ru.fierylynx.old43
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.*
 import com.badlogic.gdx.utils.Disposable
 
-class Player(world: World, position: Vector2, private val scale: Float) : Disposable{
+class Player(world: World, position: Vector2, private val scale: Float) : Disposable {
 
     var body: Body
 
@@ -19,8 +20,11 @@ class Player(world: World, position: Vector2, private val scale: Float) : Dispos
     private var jumping = false
     private var jumpUnpressed = true
 
-    private val width = 12
-    private val height = 28
+    var alive = true
+    var bodies = HashMap<String, Body>()
+
+    private val width = 16
+    private val height = 32
 
     private val anim = Anim("player")
 
@@ -44,42 +48,109 @@ class Player(world: World, position: Vector2, private val scale: Float) : Dispos
     }
 
     fun update(delta: Float) {
-        var x = 0f
-        if (Gdx.input.isKeyPressed(Input.Keys.A))
-            x -= 1
-        if (Gdx.input.isKeyPressed(Input.Keys.D))
-            x += 1
-        if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
-            body.setLinearVelocity(x * 12, body.linearVelocity.y)
-        else
-            body.setLinearVelocity(x * 5, body.linearVelocity.y)
+        if (alive) {
+            var x = 0f
+            if (Gdx.input.isKeyPressed(Input.Keys.A))
+                x -= 1
+            if (Gdx.input.isKeyPressed(Input.Keys.D))
+                x += 1
+            if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
+                body.setLinearVelocity(x * 12, body.linearVelocity.y)
+            else
+                body.setLinearVelocity(x * 5, body.linearVelocity.y)
 
-        if (Gdx.input.isKeyPressed(Input.Keys.W) && jump < jumpMaxCount && !jumping && jumpUnpressed) {
-            jumping = true
-            jumpTimer = 0f
-            jump++
-            jumpUnpressed = false
+            if (Gdx.input.isKeyPressed(Input.Keys.W) && jump < jumpMaxCount && !jumping && jumpUnpressed) {
+                jumping = true
+                jumpTimer = 0f
+                jump++
+                jumpUnpressed = false
+            }
+            if (jumping && Gdx.input.isKeyPressed(Input.Keys.W) && jumpTimer < jumpMaxTime) {
+                jumpTimer += delta
+                body.setLinearVelocity(body.linearVelocity.x, 7f)
+            } else
+                jumping = false
+            if (!jumpUnpressed && !Gdx.input.isKeyPressed(Input.Keys.W))
+                jumpUnpressed = true
+
+            if (body.linearVelocity.y == 0f && stand)
+                jump = 0
+            if (body.linearVelocity.y != 0f && jump == 0)
+                jump++
+            stand = body.linearVelocity.y == 0f
+
+            timer += delta
         }
-        if (jumping && Gdx.input.isKeyPressed(Input.Keys.W) && jumpTimer < jumpMaxTime) {
-            jumpTimer += delta
-            body.setLinearVelocity(body.linearVelocity.x, 7f)
+    }
+
+    fun death() {
+        alive = false
+        val timer = timer % anim.animations["lol"]!!.times.last()
+        var index = 0
+        for (i in anim.animations["lol"]!!.times) {
+            if (anim.animations["lol"]!!.times[index] < timer)
+                index++
         }
+        val a = if (index == 0)
+            anim.animations["lol"]!!.times[index]
         else
-            jumping = false
-        if (!jumpUnpressed && !Gdx.input.isKeyPressed(Input.Keys.W))
-            jumpUnpressed = true
+            anim.animations["lol"]!!.times[index - 1]
+        val b = anim.animations["lol"]!!.times[index]
+        for (bone in anim.bonesNames) {
+            val a1 = anim.animations["lol"]!!.states[a]!![bone]!!.angle
+            val a2 = anim.animations["lol"]!!.states[b]!![bone]!!.angle
+            val b1 = (a2 - a1)
+            val b2 = if (Math.abs((a2 - a1) - 360) < Math.abs(360 - (a1 - a2)))
+                (a2 - a1) - 360
+            else
+                360 - (a1 - a2)
 
-        if (body.linearVelocity.y == 0f && stand)
-            jump = 0
-        if (body.linearVelocity.y != 0f && jump == 0)
-            jump++
-        stand = body.linearVelocity.y == 0f
+            var angle: Float
+            angle = if (Math.abs(b1) < Math.abs(b2)) {
+                b1 * (timer - a) / (b - a)
+            } else {
+                b2 * (timer - a) / (b - a)
+            }
 
-        timer += delta
+            val bDef = BodyDef()
+            val shape = PolygonShape()
+            val fDef = FixtureDef()
+
+            val position = body.position
+
+            bDef.type = BodyDef.BodyType.DynamicBody
+            bDef.position.set(
+                    position.x - width / 2 / scale + anim.bones[bone]!!.width / 2 / scale +
+                            anim.animations["lol"]!!.states[a]!![bone]!!.x / scale + (anim.animations["lol"]!!.states[b]!![bone]!!.x / scale - anim.animations["lol"]!!.states[a]!![bone]!!.x / scale) * (timer - a) / (b - a),
+                    position.y - height / 2 / scale + anim.bones[bone]!!.height / 2 / scale +
+                            anim.animations["lol"]!!.states[a]!![bone]!!.y / scale + (anim.animations["lol"]!!.states[b]!![bone]!!.y / scale - anim.animations["lol"]!!.states[a]!![bone]!!.y / scale) * (timer - a) / (b - a)
+            )
+            bDef.angle = (anim.animations["lol"]!!.states[a]!![bone]!!.angle + angle) * MathUtils.degreesToRadians
+            bodies[bone] = body.world.createBody(bDef)
+
+            shape.setAsBox(anim.bones[bone]!!.width / 2 / scale, anim.bones[bone]!!.height / 2 / scale)
+            fDef.shape = shape
+            fDef.friction = 0f
+            fDef.density = 1f
+            bodies[bone]!!.createFixture(fDef)
+            bodies[bone]!!.userData = "playerBone"
+            bodies[bone]!!.linearVelocity = body.linearVelocity
+        }
+        body.world.destroyBody(body)
     }
 
     fun draw(batch: SpriteBatch) {
-        anim.draw(body.position.x * scale - width / 2, body.position.y * scale - height / 2, "lol", timer, batch, 1f)
+        if (alive)
+            anim.draw(body.position.x * scale - width / 2, body.position.y * scale - height / 2, "lol", timer, batch, 1f)
+        else {
+            for (bone in anim.bonesNames) {
+                batch.draw(anim.bones[bone]!!.textureRegion, bodies[bone]!!.position.x * scale - anim.bones[bone]!!.width / 2, bodies[bone]!!.position.y * scale - anim.bones[bone]!!.height / 2,
+                        anim.bones[bone]!!.width / 2, anim.bones[bone]!!.height / 2,
+                        anim.bones[bone]!!.width, anim.bones[bone]!!.height,
+                        1f, 1f,
+                        bodies[bone]!!.angle * MathUtils.radiansToDegrees)
+            }
+        }
     }
 
     override fun dispose() {

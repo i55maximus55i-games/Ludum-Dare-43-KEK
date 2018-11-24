@@ -5,6 +5,7 @@ import box2dLight.PointLight
 import box2dLight.RayHandler
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
+import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
@@ -42,6 +43,10 @@ class GameScreen : KtxScreen {
     private lateinit var rayHandler: RayHandler
 
     private lateinit var player: Player
+    private var deathTimer = 0f
+    var deathlight = false
+    lateinit var deathLight: PointLight
+    lateinit var deathMusic: Music
 
     var num = 0
     var score = 1
@@ -64,6 +69,7 @@ class GameScreen : KtxScreen {
             attachToBody(player.body)
             distance = 6f
         }
+        deathMusic = Gdx.audio.newMusic(Gdx.files.internal("titanic.mp3"))
 
         camera = OrthographicCamera()
         camera.setToOrtho(false)
@@ -114,14 +120,38 @@ class GameScreen : KtxScreen {
     override fun render(delta: Float) {
         player.update(delta)
         world.step(delta, 10, 10)
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
-            Main.setScreen(MainMenuScreen(), 0.2f)
 
+        if (player.alive) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
+                player.death()
 
-        val camTarget = player.body.position.scl(scale)
-        val camMove = camTarget.sub(Vector2(camera.position.x, camera.position.y)).scl(0.1f)
-        camera.position.x += camMove.x
-        camera.position.y += camMove.y
+            val camTarget = player.body.position.scl(scale)
+            val camMove = camTarget.sub(Vector2(camera.position.x, camera.position.y)).scl(0.1f)
+            camera.position.x += camMove.x
+            camera.position.y += camMove.y
+        }
+        else {
+            if (!deathlight) {
+                deathlight = true
+                light.remove()
+                deathLight = PointLight(rayHandler, 1000).apply {
+                    attachToBody(player.bodies["head"])
+                    distance = 4f
+                }
+                deathMusic.play()
+            }
+            val camTarget = player.bodies["head"]!!.position.scl(scale)
+            val camMove = camTarget.sub(Vector2(camera.position.x, camera.position.y)).scl(0.3f)
+            camera.position.x += camMove.x
+            camera.position.y += camMove.y
+            camera.zoom -= 0.2f * delta
+
+            deathTimer += delta
+            if (deathTimer >= 4f) {
+                deathTimer = -10f
+                Main.setScreen(MainMenuScreen(), 0.2f)
+            }
+        }
         camera.update()
 
         batch.projectionMatrix = camera.combined
@@ -158,7 +188,8 @@ class GameScreen : KtxScreen {
         super.resize(width, height)
         val scale = 196f
 
-        rayHandler.resizeFBO(width * 4, height * 4)
+        val s = 2
+        rayHandler.resizeFBO(width * s, height * s)
 
         viewport.update(width, height)
         camera.viewportWidth = scale * width / height
@@ -181,6 +212,7 @@ class GameScreen : KtxScreen {
         debugRenderer.dispose()
         rayHandler.dispose()
         player.dispose()
+        deathMusic.dispose()
     }
 
 }
