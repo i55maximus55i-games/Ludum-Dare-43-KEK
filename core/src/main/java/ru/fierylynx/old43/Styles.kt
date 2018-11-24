@@ -9,9 +9,13 @@ import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable
 
 class Styles {
     companion object {
-        val labelStyle = Label.LabelStyle().apply {
+        val labelBlackStyle = Label.LabelStyle().apply {
             font = Assets.font
             fontColor = Color.BLACK
+        }
+        val labelWhiteStyle = Label.LabelStyle().apply {
+            font = Assets.font
+            fontColor = Color.WHITE
         }
         val textButtonStyle = TextButton.TextButtonStyle().apply {
             font = Assets.font

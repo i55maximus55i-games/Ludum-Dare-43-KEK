@@ -2,7 +2,6 @@ package ru.fierylynx.old43
 
 import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Input
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
@@ -11,7 +10,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.viewport.ScreenViewport
-import ktx.actors.onClick
 
 class Main(val isDebug : Boolean) : Game() {
 
@@ -55,18 +53,18 @@ class Main(val isDebug : Boolean) : Game() {
     }
 
     private fun createStage() {
-        deltaLabel = Label("", Styles.labelStyle)
-        fpsLabel = Label("", Styles.labelStyle)
+        deltaLabel = Label("", Styles.labelBlackStyle)
+        fpsLabel = Label("", Styles.labelBlackStyle)
         stage.apply {
             addActor(Table().apply {
                 top()
                 left()
                 setFillParent(true)
 
-                add(Label("FPS  : ", Styles.labelStyle))
+                add(Label("FPS  : ", Styles.labelBlackStyle))
                 add(fpsLabel)
                 row()
-                add(Label("Time : ", Styles.labelStyle))
+                add(Label("Time : ", Styles.labelBlackStyle))
                 add(deltaLabel)
             })
         }

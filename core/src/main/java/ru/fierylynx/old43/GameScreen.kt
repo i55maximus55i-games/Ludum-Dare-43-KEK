@@ -150,6 +150,6 @@ class GameScreen : KtxScreen {
 
         file = Gdx.files.local("tries.txt")
         file.writeString("$score\n",true)
-
     }
+
 }
