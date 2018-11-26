@@ -71,27 +71,6 @@ class XboxMapping {
                     R_STICK_VERTICAL_AXIS = -1
                     R_STICK_HORIZONTAL_AXIS = -1
                 }
-                SharedLibraryLoader.isMac -> {
-                    A = -1
-                    B = -1
-                    X = -1
-                    Y = -1
-                    GUIDE = -1
-                    L_BUMPER = -1
-                    R_BUMPER = -1
-                    BACK = -1
-                    START = -1
-                    DPAD_UP = -1
-                    DPAD_DOWN = -1
-                    DPAD_LEFT = -1
-                    DPAD_RIGHT = -1
-                    L_TRIGGER_AXIS = -1
-                    R_TRIGGER_AXIS = -1
-                    L_STICK_VERTICAL_AXIS = -1
-                    L_STICK_HORIZONTAL_AXIS = -1
-                    R_STICK_VERTICAL_AXIS = -1
-                    R_STICK_HORIZONTAL_AXIS = -1
-                }
                 else -> {
                     A = -1
                     B = -1

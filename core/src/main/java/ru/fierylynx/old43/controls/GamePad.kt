@@ -12,12 +12,16 @@ class GamePad : ControllerListener {
     val buttonsPressed = HashMap<Int, Boolean>()
     val buttonsJustPressed = HashMap<Int, Boolean>()
     val axis = HashMap<Int, Float>()
-    val deathZone = 0.15f
+    val deathZone = 0.2f
 
     fun update() {
         for (btn in buttonsJustPressed.keys) {
             buttonsJustPressed[btn] = false
         }
+    }
+
+    fun axis(axisCode: Int): Float {
+        return axis.getOrDefault(axisCode, 0f)
     }
 
     fun isButtonPressed(buttonCode: Int): Boolean {

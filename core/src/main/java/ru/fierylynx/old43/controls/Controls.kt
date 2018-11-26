@@ -42,7 +42,7 @@ class Controls {
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
             x += 1f
         for (i in gamepads)
-            x += i.axis.getOrDefault(XboxMapping.L_STICK_HORIZONTAL_AXIS, 0f)
+            x += i.axis(XboxMapping.L_STICK_HORIZONTAL_AXIS)
         if (Math.abs(x) > 1f)
             x = if (x < 0f) -1f else 1f
         return x
