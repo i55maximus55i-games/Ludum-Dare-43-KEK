@@ -1,7 +1,6 @@
-package ru.fierylynx.old43
+package ru.fierylynx.old43.screens
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.scenes.scene2d.Stage
@@ -12,6 +11,8 @@ import com.badlogic.gdx.utils.viewport.Viewport
 import ktx.app.KtxScreen
 import ktx.app.clearScreen
 import ktx.app.use
+import ru.fierylynx.old43.Main
+import ru.fierylynx.old43.assets.Styles
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -161,8 +162,7 @@ class MainMenuScreen : KtxScreen {
                     Gdx.graphics.width, Gdx.graphics.height)
         }
 
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+        if (Main.controls.start()) {
             Main.setScreen(GameScreen(), 0.2f)
         }
     }

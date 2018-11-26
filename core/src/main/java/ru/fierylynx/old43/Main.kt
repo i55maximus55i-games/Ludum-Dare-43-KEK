@@ -10,12 +10,16 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.viewport.ScreenViewport
+import ru.fierylynx.old43.assets.Styles
+import ru.fierylynx.old43.controls.Controls
+import ru.fierylynx.old43.screens.MainMenuScreen
 
 class Main(val isDebug : Boolean) : Game() {
 
     companion object {
-        lateinit var instanse : Main
+        lateinit var instanse: Main
         var debug = false
+        lateinit var controls: Controls
 
         fun blink(time: Float) {
             instanse.blink(time)
@@ -42,6 +46,7 @@ class Main(val isDebug : Boolean) : Game() {
 
     override fun create() {
         instanse = this
+        controls = Controls()
         debug = isDebug
         for (i in 0 until frameTimeLen)
             frameTime.add(0f)
@@ -124,6 +129,7 @@ class Main(val isDebug : Boolean) : Game() {
             fpsLabel.setText(Gdx.graphics.framesPerSecond.toString())
             stage.draw()
         }
+        controls.update()
     }
 
     fun changeScreen(screen: Screen, time: Float) {

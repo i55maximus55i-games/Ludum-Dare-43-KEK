@@ -1,12 +1,9 @@
-package ru.fierylynx.old43
+package ru.fierylynx.old43.screens
 
-import box2dLight.Light
 import box2dLight.PointLight
 import box2dLight.RayHandler
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Input
 import com.badlogic.gdx.audio.Music
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.maps.objects.RectangleMapObject
@@ -22,6 +19,8 @@ import com.github.sarxos.webcam.WebcamResolution
 import ktx.app.KtxScreen
 import ktx.app.clearScreen
 import ktx.app.use
+import ru.fierylynx.old43.Main
+import ru.fierylynx.old43.objects.Player
 import java.awt.Dimension
 import java.awt.image.BufferedImage
 import java.io.File
@@ -112,6 +111,8 @@ class GameScreen : KtxScreen {
             shape.setAsBox(rect.getWidth() / 2 / scale, rect.getHeight() / 2 / scale)
             fDef.shape = shape
             fDef.friction = 0f
+            fDef.restitution = 0f
+            fDef.density = 1f
             body.createFixture(fDef)
             body.userData = "wall"
         }
@@ -122,7 +123,7 @@ class GameScreen : KtxScreen {
         world.step(delta, 10, 10)
 
         if (player.alive) {
-            if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
+            if (Main.controls.start())
                 player.death()
 
             val camTarget = player.body.position.scl(scale)

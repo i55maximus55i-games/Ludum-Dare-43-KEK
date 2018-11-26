@@ -1,10 +1,7 @@
-package ru.fierylynx.old43
+package ru.fierylynx.old43.assets
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
-import com.badlogic.gdx.utils.I18NBundle
-import java.util.*
 
 class Assets {
     companion object {

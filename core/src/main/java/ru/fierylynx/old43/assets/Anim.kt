@@ -1,4 +1,4 @@
-package ru.fierylynx.old43
+package ru.fierylynx.old43.assets
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.SpriteBatch

@@ -1,12 +1,12 @@
-package ru.fierylynx.old43
+package ru.fierylynx.old43.objects
 
-import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.*
 import com.badlogic.gdx.utils.Disposable
+import ru.fierylynx.old43.Main
+import ru.fierylynx.old43.assets.Anim
 
 class Player(world: World, position: Vector2, private val scale: Float) : Disposable {
 
@@ -43,34 +43,33 @@ class Player(world: World, position: Vector2, private val scale: Float) : Dispos
         shape.setAsBox(width / 2 / scale, height / 2 / scale)
         fDef.shape = shape
         fDef.friction = 0f
+        fDef.restitution = 0f
         body.createFixture(fDef)
         body.userData = "player"
     }
 
     fun update(delta: Float) {
         if (alive) {
-            var x = 0f
-            if (Gdx.input.isKeyPressed(Input.Keys.A))
-                x -= 1
-            if (Gdx.input.isKeyPressed(Input.Keys.D))
-                x += 1
-            if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
+            val x = Main.controls.playerMove()
+            if (Main.controls.playerRun())
                 body.setLinearVelocity(x * 12, body.linearVelocity.y)
             else
                 body.setLinearVelocity(x * 5, body.linearVelocity.y)
 
-            if (Gdx.input.isKeyPressed(Input.Keys.W) && jump < jumpMaxCount && !jumping && jumpUnpressed) {
-                jumping = true
-                jumpTimer = 0f
-                jump++
-                jumpUnpressed = false
+            if (Main.controls.playerJump()) {
+                if (jump < jumpMaxCount && !jumping && jumpUnpressed) {
+                    jumping = true
+                    jumpTimer = 0f
+                    jump++
+                    jumpUnpressed = false
+                }
+                if (jumping && jumpTimer < jumpMaxTime) {
+                    jumpTimer += delta
+                    body.setLinearVelocity(body.linearVelocity.x, 7f)
+                } else
+                    jumping = false
             }
-            if (jumping && Gdx.input.isKeyPressed(Input.Keys.W) && jumpTimer < jumpMaxTime) {
-                jumpTimer += delta
-                body.setLinearVelocity(body.linearVelocity.x, 7f)
-            } else
-                jumping = false
-            if (!jumpUnpressed && !Gdx.input.isKeyPressed(Input.Keys.W))
+            else if (!jumpUnpressed)
                 jumpUnpressed = true
 
             if (body.linearVelocity.y == 0f && stand)
@@ -132,6 +131,7 @@ class Player(world: World, position: Vector2, private val scale: Float) : Dispos
             fDef.shape = shape
             fDef.friction = 0f
             fDef.density = 1f
+            fDef.restitution = 0.4f
             bodies[bone]!!.createFixture(fDef)
             bodies[bone]!!.userData = "playerBone"
             bodies[bone]!!.linearVelocity = body.linearVelocity
