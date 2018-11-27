@@ -1,5 +1,7 @@
 package ru.fierylynx.old43.objects
 
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
@@ -43,7 +45,7 @@ class Player(world: World, position: Vector2, private val scale: Float) : Dispos
         shape.setAsBox(width / 2 / scale, height / 2 / scale)
         fDef.shape = shape
         fDef.friction = 0f
-        fDef.restitution = 0f
+        fDef.restitution = 0.2f
         body.createFixture(fDef)
         body.userData = "player"
     }
@@ -56,20 +58,18 @@ class Player(world: World, position: Vector2, private val scale: Float) : Dispos
             else
                 body.setLinearVelocity(x * 5, body.linearVelocity.y)
 
-            if (Main.controls.playerJump()) {
-                if (jump < jumpMaxCount && !jumping && jumpUnpressed) {
-                    jumping = true
-                    jumpTimer = 0f
-                    jump++
-                    jumpUnpressed = false
-                }
-                if (jumping && jumpTimer < jumpMaxTime) {
-                    jumpTimer += delta
-                    body.setLinearVelocity(body.linearVelocity.x, 7f)
-                } else
-                    jumping = false
+            if (Main.controls.playerJump() && jump < jumpMaxCount && !jumping && jumpUnpressed) {
+                jumping = true
+                jumpTimer = 0f
+                jump++
+                jumpUnpressed = false
             }
-            else if (!jumpUnpressed)
+            if (Main.controls.playerJump() && jumping && jumpTimer < jumpMaxTime) {
+                jumpTimer += delta
+                body.setLinearVelocity(body.linearVelocity.x, 7f)
+            } else
+                jumping = false
+            if (!Main.controls.playerJump() && !jumpUnpressed)
                 jumpUnpressed = true
 
             if (body.linearVelocity.y == 0f && stand)
@@ -131,7 +131,7 @@ class Player(world: World, position: Vector2, private val scale: Float) : Dispos
             fDef.shape = shape
             fDef.friction = 0f
             fDef.density = 1f
-            fDef.restitution = 0.4f
+            fDef.restitution = 0.6f
             bodies[bone]!!.createFixture(fDef)
             bodies[bone]!!.userData = "playerBone"
             bodies[bone]!!.linearVelocity = body.linearVelocity
