@@ -45,7 +45,7 @@ class Player(world: World, position: Vector2, private val scale: Float) : Dispos
         shape.setAsBox(width / 2 / scale, height / 2 / scale)
         fDef.shape = shape
         fDef.friction = 0f
-        fDef.restitution = 0.2f
+        fDef.restitution = 0f
         body.createFixture(fDef)
         body.userData = "player"
     }
