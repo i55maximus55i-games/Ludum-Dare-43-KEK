@@ -19,7 +19,9 @@ import com.github.sarxos.webcam.WebcamResolution
 import ktx.app.KtxScreen
 import ktx.app.clearScreen
 import ktx.app.use
+import ru.fierylynx.old43.ContactHandler
 import ru.fierylynx.old43.Main
+import ru.fierylynx.old43.objects.Enemy
 import ru.fierylynx.old43.objects.Player
 import java.awt.Dimension
 import java.awt.image.BufferedImage
@@ -48,15 +50,20 @@ class GameScreen : KtxScreen {
     lateinit var deathMusic: Music
 
     var num = 0
-    var score = 1
+    var score = 0
+    var timerSpawnEnemy = 5f
     lateinit var img : BufferedImage
     lateinit var light: PointLight
+
+    var enemies = ArrayList<Enemy>()
 
     override fun show() {
         map = TmxMapLoader().load("map.tmx")
         mapRenderer = OrthogonalTiledMapRenderer(map)
 
-        world = World(Vector2(0f, -9.8f), true)
+        world = World(Vector2(0f, -9.8f), true).apply {
+            setContactListener(ContactHandler())
+        }
         debugRenderer = Box2DDebugRenderer()
         rayHandler = RayHandler(world).apply {
             setAmbientLight(0.1f)
@@ -89,7 +96,7 @@ class GameScreen : KtxScreen {
         )
         val webcam = Webcam.getDefault()
         webcam.setCustomViewSizes(*nonStandardResolutions)
-        webcam.viewSize = WebcamResolution.SXGA.size
+        webcam.viewSize = WebcamResolution.HD.size
         webcam.open()
         img = webcam.image
         webcam.close()
@@ -119,13 +126,21 @@ class GameScreen : KtxScreen {
     }
 
     override fun render(delta: Float) {
-        player.update(delta)
+        timerSpawnEnemy += delta
+        player.update(delta, enemies)
         world.step(delta, 10, 10)
 
-        if (player.alive) {
-            if (Main.controls.start())
-                player.death()
+        if (timerSpawnEnemy > 5f) {
+            timerSpawnEnemy = 0f
+            for (i in map.layers.get("enemies").objects.getByType(RectangleMapObject::class.java)) {
+                val rect = i.rectangle
+                enemies.add(Enemy(world, Vector2(rect.x, rect.y), scale))
+            }
+        }
+        for (i in enemies)
+            i.update(delta, player)
 
+        if (player.alive) {
             val camTarget = player.body.position.scl(scale)
             val camMove = camTarget.sub(Vector2(camera.position.x, camera.position.y)).scl(0.1f)
             camera.position.x += camMove.x
@@ -162,6 +177,8 @@ class GameScreen : KtxScreen {
         mapRenderer.render()
         batch.use {
             player.draw(batch)
+            for (i in enemies)
+                i.draw(batch)
         }
         camera.zoom /= scale
         camera.position.x /= scale

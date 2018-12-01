@@ -24,10 +24,9 @@ class Controls {
         var t = false
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER))
             t = true
-        else
-            for (i in gamepads)
-                if (i.isButtonJustPressed(XboxMapping.START))
-                    t = true
+        for (i in gamepads)
+            if (i.isButtonJustPressed(XboxMapping.START))
+                t = true
         return t
     }
 
@@ -52,10 +51,9 @@ class Controls {
         var t = false
         if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
             t = true
-        else
-            for (i in gamepads)
-                if (i.isButtonPressed(XboxMapping.B))
-                    t = true
+        for (i in gamepads)
+            if (i.isButtonPressed(XboxMapping.L_BUMPER))
+            t = true
         return t
     }
 
@@ -63,10 +61,19 @@ class Controls {
         var t = false
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE))
             t = true
-        else
-            for (i in gamepads)
-                if (i.isButtonPressed(XboxMapping.A))
-                    t = true
+        for (i in gamepads)
+            if (i.isButtonPressed(XboxMapping.A))
+                t = true
+        return t
+    }
+
+    fun attack(): Boolean {
+        var t = false
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F))
+            t = true
+        for (i in gamepads)
+            if (i.isButtonJustPressed(XboxMapping.X))
+                t = true
         return t
     }
 

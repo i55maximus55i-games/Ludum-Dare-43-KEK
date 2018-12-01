@@ -7,9 +7,8 @@ import com.badlogic.gdx.physics.box2d.*
 import com.badlogic.gdx.utils.Disposable
 import ru.fierylynx.old43.Main
 import ru.fierylynx.old43.assets.Anim
-import java.util.ArrayList
 
-class Player(world: World, position: Vector2, private val scale: Float) : Disposable {
+class Enemy(world: World, position: Vector2, private val scale: Float) : Disposable {
 
     var body: Body
 
@@ -22,14 +21,16 @@ class Player(world: World, position: Vector2, private val scale: Float) : Dispos
     private var jumpUnpressed = true
 
     var alive = true
-    var lives = 3
     var bodies = HashMap<String, Body>()
+
+    var goback = 0f
+    var lives = 3
 
     private val width = 16
     private val height = 32
     private val assetScale = 32f
 
-    private val anim = Anim("player")
+    private val anim = Anim("enemy")
 
     private var timer = 0f
 
@@ -48,29 +49,24 @@ class Player(world: World, position: Vector2, private val scale: Float) : Dispos
         fDef.friction = 0f
         fDef.restitution = 0f
         body.createFixture(fDef)
-        body.userData = "player"
+        body.userData = "enemy"
     }
 
-    fun update(delta: Float, enemies: ArrayList<Enemy>) {
+    fun update(delta: Float, player: Player) {
         if (alive) {
-            val x = Main.controls.playerMove()
-            if (Main.controls.playerRun())
-                body.setLinearVelocity(x * 12, body.linearVelocity.y)
-            else
-                body.setLinearVelocity(x * 5, body.linearVelocity.y)
-
-            if (Main.controls.playerJump() && jump < jumpMaxCount && !jumping && jumpUnpressed) {
+            val mustJump = Math.abs(body.linearVelocity.x) < 4f
+            if (mustJump && jump < jumpMaxCount && !jumping && jumpUnpressed) {
                 jumping = true
                 jumpTimer = 0f
                 jump++
                 jumpUnpressed = false
             }
-            if (Main.controls.playerJump() && jumping && jumpTimer < jumpMaxTime) {
+            if (mustJump && jumping && jumpTimer < jumpMaxTime) {
                 jumpTimer += delta
                 body.setLinearVelocity(body.linearVelocity.x, 7f)
             } else
                 jumping = false
-            if (!Main.controls.playerJump() && !jumpUnpressed)
+            if (!mustJump && !jumpUnpressed)
                 jumpUnpressed = true
 
             if (body.linearVelocity.y == 0f && stand)
@@ -79,16 +75,29 @@ class Player(world: World, position: Vector2, private val scale: Float) : Dispos
                 jump++
             stand = body.linearVelocity.y == 0f
 
-            timer += delta
-
-            if (Main.controls.attack()) {
-                for (i in enemies) {
-                    if (i.body.position.dst(body.position) < 3f) {
-                        i.lives--
-                        i.goback = 1f
-                    }
+            if (goback >= 0f) {
+                if (body.position.x > player.body.position.x) {
+                    body.setLinearVelocity(16f, body.linearVelocity.y)
+                }
+                else {
+                    body.setLinearVelocity(-16f, body.linearVelocity.y)
                 }
             }
+            else {
+                if (body.position.x > player.body.position.x) {
+                    body.setLinearVelocity(-5f, body.linearVelocity.y)
+                }
+                else {
+                    body.setLinearVelocity(5f, body.linearVelocity.y)
+                }
+                if (player.body.position.dst(body.position) < 2f) {
+                    player.lives--
+                    goback = 1f
+                }
+            }
+
+            timer += delta
+            goback -= delta
 
             if (lives <= 0)
                 death()
