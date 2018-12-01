@@ -5,71 +5,57 @@ filter: Nearest,Nearest
 repeat: none
 head
   rotate: false
-  xy: 0, 0
-  size: 512, 512
+  xy: 590, 0
+  size: 632, 926
   orig: 0, 0
   offset: 0, 0
   index: -1
 body
   rotate: false
-  xy: 64, 512
-  size: 128, 256
+  xy: 0, 0
+  size: 590, 800
   orig: 0, 0
   offset: 0, 0
   index: -1
-leg-left-1
+leg-left
   rotate: false
-  xy: 0, 768
-  size: 64, 128
+  xy: 263, 800
+  size: 205, 132
   orig: 0, 0
   offset: 0, 0
   index: -1
-leg-left-2
+leg-right
   rotate: false
-  xy: 0, 896
-  size: 64, 128
-  orig: 0, 0
-  offset: 0, 0
-  index: -1
-leg-right-1
-  rotate: false
-  xy: 64, 768
-  size: 64, 128
-  orig: 0, 0
-  offset: 0, 0
-  index: -1
-leg-right-2
-  rotate: false
-  xy: 64, 896
-  size: 64, 128
+  xy: 263, 800
+  size: 205, 132
   orig: 0, 0
   offset: 0, 0
   index: -1
 arm-left-1
   rotate: false
-  xy: 0, 512
-  size: 64, 128
+  xy: 135, 800
+  size: 128, 205
   orig: 0, 0
   offset: 0, 0
   index: -1
 arm-left-2
   rotate: false
-  xy: 0, 640
-  size: 64, 128
+  xy: 0, 800
+  size: 135, 284
   orig: 0, 0
   offset: 0, 0
   index: -1
 arm-right-1
   rotate: false
-  xy: 192, 512
-  size: 64, 128
+  xy: 135, 800
+  size: 128, 205
   orig: 0, 0
   offset: 0, 0
   index: -1
 arm-right-2
   rotate: false
-  xy: 192, 640
-  size: 64, 128
+  xy: 0, 800
+  size: 135, 284
   orig: 0, 0
   offset: 0, 0
   index: -1

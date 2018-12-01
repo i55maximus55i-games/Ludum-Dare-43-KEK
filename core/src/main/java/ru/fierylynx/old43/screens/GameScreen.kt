@@ -12,6 +12,9 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.*
+import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.ui.Label
+import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.github.sarxos.webcam.Webcam
@@ -21,6 +24,7 @@ import ktx.app.clearScreen
 import ktx.app.use
 import ru.fierylynx.old43.ContactHandler
 import ru.fierylynx.old43.Main
+import ru.fierylynx.old43.assets.Styles
 import ru.fierylynx.old43.objects.Enemy
 import ru.fierylynx.old43.objects.Player
 import java.awt.Dimension
@@ -56,6 +60,9 @@ class GameScreen : KtxScreen {
     lateinit var light: PointLight
 
     var enemies = ArrayList<Enemy>()
+    lateinit var label: Label
+
+    private var stage = Stage(ScreenViewport())
 
     override fun show() {
         map = TmxMapLoader().load("map.tmx")
@@ -66,7 +73,7 @@ class GameScreen : KtxScreen {
         }
         debugRenderer = Box2DDebugRenderer()
         rayHandler = RayHandler(world).apply {
-            setAmbientLight(0.1f)
+            setAmbientLight(0.25f)
         }
 
         createWalls()
@@ -86,6 +93,16 @@ class GameScreen : KtxScreen {
         if (file.exists()) {
             val scanner = Scanner(file.read())
             num = scanner.nextInt()
+        }
+
+        stage.apply {
+            addActor(Table().apply {
+                setFillParent(true)
+                top()
+                right()
+                label = Label("", Styles.labelWhiteStyle)
+                add(label)
+            })
         }
 
         val nonStandardResolutions = arrayOf<Dimension>(
@@ -190,6 +207,12 @@ class GameScreen : KtxScreen {
         camera.position.x *= scale
         camera.position.y *= scale
 
+        if (player.alive) {
+            label.setText("Lives: ${player.lives}")
+            stage.act()
+            stage.draw()
+        }
+
         if (Main.debug) {
             camera.zoom /= scale
             camera.position.x /= scale
@@ -212,6 +235,8 @@ class GameScreen : KtxScreen {
         viewport.update(width, height)
         camera.viewportWidth = scale * width / height
         camera.viewportHeight = scale
+
+        stage.viewport.update(width, height, true)
     }
 
     override fun dispose() {

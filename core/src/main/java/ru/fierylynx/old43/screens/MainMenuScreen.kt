@@ -53,7 +53,7 @@ class MainMenuScreen : KtxScreen {
         var max = ArrayList<Int>()
         var maxIndex = ArrayList<Int>()
         if (num >= 1) {
-            max.add(0)
+            max.add(Int.MIN_VALUE)
             maxIndex.add(0)
             for (i in 0 until l.size) {
                 if (max[0] < l[i]) {
@@ -65,7 +65,7 @@ class MainMenuScreen : KtxScreen {
             texture1 = Texture(Gdx.files.local("${maxIndex[0]}.png"))
         }
         if (num >= 2) {
-            max.add(0)
+            max.add(Int.MIN_VALUE)
             maxIndex.add(0)
             for (i in 0 until l.size) {
                 var a = true
@@ -81,7 +81,7 @@ class MainMenuScreen : KtxScreen {
             texture2 = Texture(Gdx.files.local("${maxIndex[1]}.png"))
         }
         if (num >= 3) {
-            max.add(0)
+            max.add(Int.MIN_VALUE)
             maxIndex.add(0)
             for (i in 0 until l.size) {
                 var a = true

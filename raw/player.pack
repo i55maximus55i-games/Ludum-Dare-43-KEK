@@ -6,70 +6,71 @@ repeat: none
 head
   rotate: false
   xy: 0, 0
-  size: 512, 512
+  size: 689, 599
   orig: 0, 0
   offset: 0, 0
   index: -1
 body
   rotate: false
-  xy: 64, 512
-  size: 128, 256
+  xy: 689, 0
+  size: 335, 321
   orig: 0, 0
   offset: 0, 0
   index: -1
 leg-left-1
   rotate: false
-  xy: 0, 768
-  size: 64, 128
-  orig: 0, 0
-  offset: 0, 0
-  index: -1
-leg-left-2
-  rotate: false
-  xy: 0, 896
-  size: 64, 128
+  xy: 689, 321
+  size: 134, 159
   orig: 0, 0
   offset: 0, 0
   index: -1
 leg-right-1
   rotate: false
-  xy: 64, 768
-  size: 64, 128
+  xy: 823, 321
+  size: 130, 156
+  orig: 0, 0
+  offset: 0, 0
+  index: -1
+leg-left-2
+  rotate: false
+  xy: 689, 480
+  size: 109, 73
   orig: 0, 0
   offset: 0, 0
   index: -1
 leg-right-2
   rotate: false
-  xy: 64, 896
-  size: 64, 128
+  xy: 689, 480
+  size: 109, 73
   orig: 0, 0
   offset: 0, 0
   index: -1
-arm-left-1
+hand-left-1
   rotate: false
-  xy: 0, 512
-  size: 64, 128
+  xy: 1024, 0
+  size: 112, 187
   orig: 0, 0
   offset: 0, 0
   index: -1
-arm-left-2
+hand-left-2
   rotate: false
-  xy: 0, 640
-  size: 64, 128
+  xy: 1024, 187
+  size: 100, 205
   orig: 0, 0
   offset: 0, 0
   index: -1
-arm-right-1
+hand-right-1
   rotate: false
-  xy: 192, 512
-  size: 64, 128
+  xy: 1024, 0
+  size: 112, 187
   orig: 0, 0
   offset: 0, 0
   index: -1
-arm-right-2
+hand-right-2
   rotate: false
-  xy: 192, 640
-  size: 64, 128
+  xy: 1024, 187
+  size: 100, 205
   orig: 0, 0
   offset: 0, 0
   index: -1
+  

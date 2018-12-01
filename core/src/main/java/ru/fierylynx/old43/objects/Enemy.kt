@@ -31,6 +31,7 @@ class Enemy(world: World, position: Vector2, private val scale: Float) : Disposa
     private val assetScale = 32f
 
     private val anim = Anim("enemy")
+    private var selectedAnim = "skibidi"
 
     private var timer = 0f
 
@@ -54,7 +55,11 @@ class Enemy(world: World, position: Vector2, private val scale: Float) : Disposa
 
     fun update(delta: Float, player: Player) {
         if (alive) {
-            val mustJump = Math.abs(body.linearVelocity.x) < 4f
+            val mustJump = if (goback < 0)
+                Math.abs(body.linearVelocity.x) < 4f
+            else
+                Math.abs(body.linearVelocity.x) < 15f
+
             if (mustJump && jump < jumpMaxCount && !jumping && jumpUnpressed) {
                 jumping = true
                 jumpTimer = 0f
@@ -95,6 +100,26 @@ class Enemy(world: World, position: Vector2, private val scale: Float) : Disposa
                     goback = 1f
                 }
             }
+            if (body.linearVelocity.x >= 0) {
+                if (goback >= 0 && selectedAnim != "run_right") {
+                    selectedAnim = "run_right"
+                }
+                if (goback < 0 && selectedAnim != "walk_right") {
+                    selectedAnim = "walk_right"
+                }
+            }
+            else {
+                if (goback >= 0 && selectedAnim != "run_left") {
+                    selectedAnim = "run_left"
+                }
+                if (goback < 0 && selectedAnim != "walk_left") {
+                    selectedAnim = "walk_left"
+                }
+            }
+            if (!player.alive) {
+                body.linearVelocity = Vector2()
+                selectedAnim = "skibidi"
+            }
 
             timer += delta
             goback -= delta
@@ -106,20 +131,20 @@ class Enemy(world: World, position: Vector2, private val scale: Float) : Disposa
 
     fun death() {
         alive = false
-        val timer = timer % anim.animations["lol"]!!.times.last()
+        val timer = timer % anim.animations[selectedAnim]!!.times.last()
         var index = 0
-        for (i in anim.animations["lol"]!!.times) {
-            if (anim.animations["lol"]!!.times[index] < timer)
+        for (i in anim.animations[selectedAnim]!!.times) {
+            if (anim.animations[selectedAnim]!!.times[index] < timer)
                 index++
         }
         val a = if (index == 0)
-            anim.animations["lol"]!!.times[index]
+            anim.animations[selectedAnim]!!.times[index]
         else
-            anim.animations["lol"]!!.times[index - 1]
-        val b = anim.animations["lol"]!!.times[index]
+            anim.animations[selectedAnim]!!.times[index - 1]
+        val b = anim.animations[selectedAnim]!!.times[index]
         for (bone in anim.bonesNames) {
-            val a1 = anim.animations["lol"]!!.states[a]!![bone]!!.angle
-            val a2 = anim.animations["lol"]!!.states[b]!![bone]!!.angle
+            val a1 = anim.animations[selectedAnim]!!.states[a]!![bone]!!.angle
+            val a2 = anim.animations[selectedAnim]!!.states[b]!![bone]!!.angle
             val b1 = (a2 - a1)
             val b2 = if (Math.abs((a2 - a1) - 360) < Math.abs(360 - (a1 - a2)))
                 (a2 - a1) - 360
@@ -142,11 +167,11 @@ class Enemy(world: World, position: Vector2, private val scale: Float) : Disposa
             bDef.type = BodyDef.BodyType.DynamicBody
             bDef.position.set(
                     position.x - width / 2 / scale + anim.bones[bone]!!.width / 2 / scale / assetScale +
-                            anim.animations["lol"]!!.states[a]!![bone]!!.x / scale / assetScale + (anim.animations["lol"]!!.states[b]!![bone]!!.x / scale / assetScale - anim.animations["lol"]!!.states[a]!![bone]!!.x / scale / assetScale) * (timer - a) / (b - a),
+                            anim.animations[selectedAnim]!!.states[a]!![bone]!!.x / scale / assetScale + (anim.animations[selectedAnim]!!.states[b]!![bone]!!.x / scale / assetScale - anim.animations[selectedAnim]!!.states[a]!![bone]!!.x / scale / assetScale) * (timer - a) / (b - a),
                     position.y - height / 2 / scale + anim.bones[bone]!!.height / 2 / scale / assetScale +
-                            anim.animations["lol"]!!.states[a]!![bone]!!.y / scale / assetScale + (anim.animations["lol"]!!.states[b]!![bone]!!.y / scale / assetScale - anim.animations["lol"]!!.states[a]!![bone]!!.y / scale / assetScale) * (timer - a) / (b - a)
+                            anim.animations[selectedAnim]!!.states[a]!![bone]!!.y / scale / assetScale + (anim.animations[selectedAnim]!!.states[b]!![bone]!!.y / scale / assetScale - anim.animations[selectedAnim]!!.states[a]!![bone]!!.y / scale / assetScale) * (timer - a) / (b - a)
             )
-            bDef.angle = (anim.animations["lol"]!!.states[a]!![bone]!!.angle + angle) * MathUtils.degreesToRadians
+            bDef.angle = (anim.animations[selectedAnim]!!.states[a]!![bone]!!.angle + angle) * MathUtils.degreesToRadians
             bodies[bone] = body.world.createBody(bDef)
 
             shape.setAsBox(anim.bones[bone]!!.width / 2 / scale / assetScale, anim.bones[bone]!!.height / 2 / scale / assetScale)
@@ -163,7 +188,7 @@ class Enemy(world: World, position: Vector2, private val scale: Float) : Disposa
 
     fun draw(batch: SpriteBatch) {
         if (alive)
-            anim.draw(body.position.x * scale - width / 2, body.position.y * scale - height / 2, "lol", timer, batch, 1f / assetScale)
+            anim.draw(body.position.x * scale - width / 2, body.position.y * scale - height / 2, selectedAnim, timer, batch, 1f / assetScale)
         else {
             for (bone in anim.bonesNames) {
                 batch.draw(anim.bones[bone]!!.textureRegion, bodies[bone]!!.position.x * scale - anim.bones[bone]!!.width / 2  / assetScale, bodies[bone]!!.position.y * scale - anim.bones[bone]!!.height / 2 / assetScale,
