@@ -27,6 +27,7 @@ class Player(world: World, position: Vector2, private val scale: Float) : Dispos
 
     private val width = 16
     private val height = 32
+    private val assetScale = 32f
 
     private val anim = Anim("player")
 
@@ -119,15 +120,15 @@ class Player(world: World, position: Vector2, private val scale: Float) : Dispos
 
             bDef.type = BodyDef.BodyType.DynamicBody
             bDef.position.set(
-                    position.x - width / 2 / scale + anim.bones[bone]!!.width / 2 / scale +
-                            anim.animations["lol"]!!.states[a]!![bone]!!.x / scale + (anim.animations["lol"]!!.states[b]!![bone]!!.x / scale - anim.animations["lol"]!!.states[a]!![bone]!!.x / scale) * (timer - a) / (b - a),
-                    position.y - height / 2 / scale + anim.bones[bone]!!.height / 2 / scale +
-                            anim.animations["lol"]!!.states[a]!![bone]!!.y / scale + (anim.animations["lol"]!!.states[b]!![bone]!!.y / scale - anim.animations["lol"]!!.states[a]!![bone]!!.y / scale) * (timer - a) / (b - a)
+                    position.x - width / 2 / scale + anim.bones[bone]!!.width / 2 / scale / assetScale +
+                            anim.animations["lol"]!!.states[a]!![bone]!!.x / scale / assetScale + (anim.animations["lol"]!!.states[b]!![bone]!!.x / scale / assetScale - anim.animations["lol"]!!.states[a]!![bone]!!.x / scale / assetScale) * (timer - a) / (b - a),
+                    position.y - height / 2 / scale + anim.bones[bone]!!.height / 2 / scale / assetScale +
+                            anim.animations["lol"]!!.states[a]!![bone]!!.y / scale / assetScale + (anim.animations["lol"]!!.states[b]!![bone]!!.y / scale / assetScale - anim.animations["lol"]!!.states[a]!![bone]!!.y / scale / assetScale) * (timer - a) / (b - a)
             )
             bDef.angle = (anim.animations["lol"]!!.states[a]!![bone]!!.angle + angle) * MathUtils.degreesToRadians
             bodies[bone] = body.world.createBody(bDef)
 
-            shape.setAsBox(anim.bones[bone]!!.width / 2 / scale, anim.bones[bone]!!.height / 2 / scale)
+            shape.setAsBox(anim.bones[bone]!!.width / 2 / scale / assetScale, anim.bones[bone]!!.height / 2 / scale / assetScale)
             fDef.shape = shape
             fDef.friction = 0f
             fDef.density = 1f
@@ -141,12 +142,12 @@ class Player(world: World, position: Vector2, private val scale: Float) : Dispos
 
     fun draw(batch: SpriteBatch) {
         if (alive)
-            anim.draw(body.position.x * scale - width / 2, body.position.y * scale - height / 2, "lol", timer, batch, 1f)
+            anim.draw(body.position.x * scale - width / 2, body.position.y * scale - height / 2, "lol", timer, batch, 1f / assetScale)
         else {
             for (bone in anim.bonesNames) {
-                batch.draw(anim.bones[bone]!!.textureRegion, bodies[bone]!!.position.x * scale - anim.bones[bone]!!.width / 2, bodies[bone]!!.position.y * scale - anim.bones[bone]!!.height / 2,
-                        anim.bones[bone]!!.width / 2, anim.bones[bone]!!.height / 2,
-                        anim.bones[bone]!!.width, anim.bones[bone]!!.height,
+                batch.draw(anim.bones[bone]!!.textureRegion, bodies[bone]!!.position.x * scale - anim.bones[bone]!!.width / 2  / assetScale, bodies[bone]!!.position.y * scale - anim.bones[bone]!!.height / 2 / assetScale,
+                        anim.bones[bone]!!.width / 2 / assetScale, anim.bones[bone]!!.height / 2 / assetScale,
+                        anim.bones[bone]!!.width / assetScale, anim.bones[bone]!!.height / assetScale,
                         1f, 1f,
                         bodies[bone]!!.angle * MathUtils.radiansToDegrees)
             }

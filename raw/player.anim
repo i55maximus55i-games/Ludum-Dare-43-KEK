@@ -1,0 +1,17 @@
+bones {
+	body leg-left-2 leg-left-1 leg-right-2 leg-right-1 head arm-left-1 arm-left-2 arm-right-1 arm-right-2 
+}
+anim {
+	0.0 {
+		body 202.41357 297.79886 0.0
+		leg-left-2 171.9322 66.74802 0.0
+		leg-left-1 177.71751 185.92543 0.0
+		leg-right-2 299.20905 66.74802 0.0
+		leg-right-1 292.26666 185.92543 0.0
+		head -2.3141174 523.85986 0.0
+		arm-left-1 169.61807 423.12317 333.2143
+		arm-left-2 136.06328 313.20227 0.0
+		arm-right-1 293.42374 431.2226 40.163414
+		arm-right-2 335.07797 337.50058 0.0
+	}
+}

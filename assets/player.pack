@@ -6,42 +6,70 @@ repeat: none
 head
   rotate: false
   xy: 0, 0
-  size: 8, 8
+  size: 512, 512
   orig: 0, 0
   offset: 0, 0
   index: -1
 body
   rotate: false
-  xy: 8, 0
-  size: 4, 8
+  xy: 64, 512
+  size: 128, 256
   orig: 0, 0
   offset: 0, 0
   index: -1
-leg1
+leg-left-1
   rotate: false
-  xy: 12, 0
-  size: 4, 8
+  xy: 0, 768
+  size: 64, 128
   orig: 0, 0
   offset: 0, 0
   index: -1
-leg2
+leg-left-2
   rotate: false
-  xy: 16, 0
-  size: 4, 8
+  xy: 0, 896
+  size: 64, 128
   orig: 0, 0
   offset: 0, 0
   index: -1
-arm1
+leg-right-1
   rotate: false
-  xy: 20, 0
-  size: 4, 8
+  xy: 64, 768
+  size: 64, 128
   orig: 0, 0
   offset: 0, 0
   index: -1
-arm2
+leg-right-2
   rotate: false
-  xy: 24, 0
-  size: 4, 8
+  xy: 64, 896
+  size: 64, 128
+  orig: 0, 0
+  offset: 0, 0
+  index: -1
+arm-left-1
+  rotate: false
+  xy: 0, 512
+  size: 64, 128
+  orig: 0, 0
+  offset: 0, 0
+  index: -1
+arm-left-2
+  rotate: false
+  xy: 0, 640
+  size: 64, 128
+  orig: 0, 0
+  offset: 0, 0
+  index: -1
+arm-right-1
+  rotate: false
+  xy: 192, 512
+  size: 64, 128
+  orig: 0, 0
+  offset: 0, 0
+  index: -1
+arm-right-2
+  rotate: false
+  xy: 192, 640
+  size: 64, 128
   orig: 0, 0
   offset: 0, 0
   index: -1
