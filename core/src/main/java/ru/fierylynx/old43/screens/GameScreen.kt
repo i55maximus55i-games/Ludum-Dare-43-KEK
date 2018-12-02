@@ -60,13 +60,14 @@ class GameScreen : KtxScreen {
     var score = 0
     var scoreTimer = 4f
     var timerSpawnEnemy = 10f
-    private var gameoverTimer = 90f
+    private var gameoverTimer = 60f
     lateinit var img : BufferedImage
     lateinit var light: PointLight
 
     var enemies = ArrayList<Enemy>()
     private lateinit var labelLives: Label
     private lateinit var labelScore: Label
+    private lateinit var labelTimer: Label
     private var fuck = true
 
     private var stage = Stage(ScreenViewport())
@@ -116,9 +117,12 @@ class GameScreen : KtxScreen {
                 right()
                 labelLives = Label("", Styles.labelWhiteStyle)
                 labelScore = Label("", Styles.labelWhiteStyle)
+                labelTimer = Label("", Styles.labelWhiteStyle)
                 add(labelLives)
                 row()
                 add(labelScore)
+                row()
+                add(labelTimer)
             })
         }
 
@@ -326,6 +330,7 @@ class GameScreen : KtxScreen {
         if (player.alive) {
             labelLives.setText("Lives: ${player.lives}")
             labelScore.setText("Score: $score")
+            labelTimer.setText("Time: ${gameoverTimer.toInt()}")
             stage.act()
             stage.draw()
         }
