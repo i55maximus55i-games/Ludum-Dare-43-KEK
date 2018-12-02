@@ -95,9 +95,10 @@ class Enemy(world: World, position: Vector2, private val scale: Float) : Disposa
                 else {
                     body.setLinearVelocity(5f, body.linearVelocity.y)
                 }
-                if (player.body.position.dst(body.position) < 2f) {
+                if (player.body.position.dst(body.position) < 2f && player.alive) {
                     player.lives--
                     goback = 1f
+                    Main.hitSound.play()
                 }
             }
             if (body.linearVelocity.x >= 0) {
@@ -124,6 +125,8 @@ class Enemy(world: World, position: Vector2, private val scale: Float) : Disposa
             timer += delta
             goback -= delta
 
+            if (body.position.y < 0f)
+                lives = 0
             if (lives <= 0)
                 death()
         }

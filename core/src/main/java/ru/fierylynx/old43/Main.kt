@@ -3,6 +3,8 @@ package ru.fierylynx.old43
 import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
+import com.badlogic.gdx.audio.Music
+import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector2
@@ -20,6 +22,10 @@ class Main(val isDebug : Boolean) : Game() {
         lateinit var instanse: Main
         var debug = false
         lateinit var controls: Controls
+
+        lateinit var mainMusic: Music
+        lateinit var gameMusic: Music
+        lateinit var hitSound: Sound
 
         fun blink(time: Float) {
             instanse.blink(time)
@@ -45,6 +51,10 @@ class Main(val isDebug : Boolean) : Game() {
     private var frameTime = ArrayList<Float>(frameTimeLen)
 
     override fun create() {
+        hitSound = Gdx.audio.newSound(Gdx.files.internal("hit.mp3"))
+        mainMusic = Gdx.audio.newMusic(Gdx.files.internal("theme.mp3"))
+        gameMusic = Gdx.audio.newMusic(Gdx.files.internal("game.mp3"))
+
         instanse = this
         controls = Controls()
         debug = isDebug

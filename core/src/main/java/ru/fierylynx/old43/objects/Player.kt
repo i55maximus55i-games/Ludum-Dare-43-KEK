@@ -24,6 +24,7 @@ class Player(world: World, position: Vector2, private val scale: Float) : Dispos
     var alive = true
     var lives = 3
     var bodies = HashMap<String, Body>()
+    var timerAttack = 0f
 
     private val width = 16
     private val height = 32
@@ -54,6 +55,34 @@ class Player(world: World, position: Vector2, private val scale: Float) : Dispos
 
     fun update(delta: Float, enemies: ArrayList<Enemy>) {
         if (alive) {
+            if (timerAttack <= 0.3f) {
+                if (body.linearVelocity.x >= 0) {
+                    selectedAnim = "attack_right"
+                }
+                else if (body.linearVelocity.x < 0){
+                    selectedAnim = "attack_left"
+                }
+            }
+            else if (body.linearVelocity.x > 0) {
+                if (Main.controls.playerRun() && selectedAnim != "run_right") {
+                    selectedAnim = "run_right"
+                }
+                if (!Main.controls.playerRun() && selectedAnim != "walk_right") {
+                    selectedAnim = "walk_right"
+                }
+            }
+            else if (body.linearVelocity.x < 0){
+                if (Main.controls.playerRun() && selectedAnim != "run_left") {
+                    selectedAnim = "run_left"
+                }
+                if (!Main.controls.playerRun() && selectedAnim != "walk_left") {
+                    selectedAnim = "walk_left"
+                }
+            }
+            else {
+                selectedAnim = "stand"
+            }
+
             val x = Main.controls.playerMove()
             if (Main.controls.playerRun())
                 body.setLinearVelocity(x * 12, body.linearVelocity.y)
@@ -80,28 +109,11 @@ class Player(world: World, position: Vector2, private val scale: Float) : Dispos
                 jump++
             stand = body.linearVelocity.y == 0f
 
-            if (body.linearVelocity.x > 0) {
-                if (Main.controls.playerRun() && selectedAnim != "run_right") {
-                    selectedAnim = "run_right"
-                }
-                if (!Main.controls.playerRun() && selectedAnim != "walk_right") {
-                    selectedAnim = "walk_right"
-                }
-            }
-            else if (body.linearVelocity.x < 0){
-                if (Main.controls.playerRun() && selectedAnim != "run_left") {
-                    selectedAnim = "run_left"
-                }
-                if (!Main.controls.playerRun() && selectedAnim != "walk_left") {
-                    selectedAnim = "walk_left"
-                }
-            }
-            else {
-                selectedAnim = "stand"
-            }
             timer += delta
 
+            timerAttack += delta
             if (Main.controls.attack()) {
+                timerAttack = 0f
                 for (i in enemies) {
                     if (i.body.position.dst(body.position) < 3f) {
                         i.lives--
@@ -110,6 +122,8 @@ class Player(world: World, position: Vector2, private val scale: Float) : Dispos
                 }
             }
 
+            if (body.position.y < 0f)
+                lives = 0
             if (lives <= 0)
                 death()
         }

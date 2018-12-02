@@ -5,6 +5,7 @@ import box2dLight.RayHandler
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.maps.objects.RectangleMapObject
 import com.badlogic.gdx.maps.tiled.TiledMap
@@ -64,6 +65,11 @@ class GameScreen : KtxScreen {
 
     private var stage = Stage(ScreenViewport())
 
+    var parallaxTexture1 = Texture("BG.png")
+    var parallaxTexture2 = Texture("BG1.png")
+    var parallaxTexture3 = Texture("BG2.png")
+    var parallaxTexture4 = Texture("BG3.png")
+
     override fun show() {
         map = TmxMapLoader().load("map.tmx")
         mapRenderer = OrthogonalTiledMapRenderer(map)
@@ -117,6 +123,10 @@ class GameScreen : KtxScreen {
         webcam.open()
         img = webcam.image
         webcam.close()
+
+        Main.gameMusic.isLooping = true
+        Main.gameMusic.play()
+        Main.gameMusic.volume = 0.25f
     }
 
     private fun createWalls() {
@@ -171,6 +181,8 @@ class GameScreen : KtxScreen {
                     attachToBody(player.bodies["head"])
                     distance = 4f
                 }
+                Main.gameMusic.isLooping = false
+                Main.gameMusic.stop()
                 deathMusic.play()
             }
             val camTarget = player.bodies["head"]!!.position.scl(scale)
@@ -190,12 +202,87 @@ class GameScreen : KtxScreen {
         batch.projectionMatrix = camera.combined
         mapRenderer.setView(camera)
 
-        clearScreen(0f, 0.84f, 1f, 1f)
+        clearScreen(45f / 255f, 32f / 255f, 92f / 255f, 1f)
+
+        //parallax
+        apply {
+            camera.zoom /= 2f
+            camera.position.x /= 3f
+            camera.position.y /= 3f
+            camera.update()
+            batch.projectionMatrix = camera.combined
+            batch.use {
+                for (i in -1 until 6) {
+                    batch.draw(parallaxTexture1, parallaxTexture1.width.toFloat() * i, 0f)
+                }
+            }
+            camera.zoom *= 2f
+            camera.position.x *= 3f
+            camera.position.y *= 3f
+            camera.update()
+            batch.projectionMatrix = camera.combined
+            mapRenderer.setView(camera)
+        }
+        apply {
+            camera.zoom /= 2f
+            camera.position.x /= 2.7f
+            camera.position.y /= 2.7f
+            camera.update()
+            batch.projectionMatrix = camera.combined
+            batch.use {
+                for (i in -1 until 6) {
+                    batch.draw(parallaxTexture2, parallaxTexture1.width.toFloat() * i, 0f)
+                }
+            }
+            camera.zoom *= 2f
+            camera.position.x *= 2.7f
+            camera.position.y *= 2.7f
+            camera.update()
+            batch.projectionMatrix = camera.combined
+            mapRenderer.setView(camera)
+        }
+        apply {
+            camera.zoom /= 2f
+            camera.position.x /= 2.5f
+            camera.position.y /= 2.5f
+            camera.update()
+            batch.projectionMatrix = camera.combined
+            batch.use {
+                for (i in -1 until 6) {
+                    batch.draw(parallaxTexture3, parallaxTexture1.width.toFloat() * i, 0f)
+                }
+            }
+            camera.zoom *= 2f
+            camera.position.x *= 2.5f
+            camera.position.y *= 2.5f
+            camera.update()
+            batch.projectionMatrix = camera.combined
+            mapRenderer.setView(camera)
+        }
+        apply {
+            camera.zoom /= 2f
+            camera.position.x /= 2.2f
+            camera.position.y /= 2.2f
+            camera.update()
+            batch.projectionMatrix = camera.combined
+            batch.use {
+                for (i in -1 until 6) {
+                    batch.draw(parallaxTexture4, parallaxTexture1.width.toFloat() * i, 0f)
+                }
+            }
+            camera.zoom *= 2f
+            camera.position.x *= 2.2f
+            camera.position.y *= 2.2f
+            camera.update()
+            batch.projectionMatrix = camera.combined
+            mapRenderer.setView(camera)
+        }
+
         mapRenderer.render()
         batch.use {
-            player.draw(batch)
             for (i in enemies)
                 i.draw(batch)
+            player.draw(batch)
         }
         camera.zoom /= scale
         camera.position.x /= scale

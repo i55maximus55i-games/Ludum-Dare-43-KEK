@@ -97,6 +97,8 @@ class MainMenuScreen : KtxScreen {
             texture3 = Texture(Gdx.files.local("${maxIndex[2]}.png"))
         }
 
+        Main.mainMusic.isLooping = true
+        Main.mainMusic.play()
     }
 
     private fun createStage(text: String, right: Boolean): Stage {
@@ -183,5 +185,11 @@ class MainMenuScreen : KtxScreen {
             stage2.viewport.update(width / 4, height / 3, true)
         if (num >= 3)
             stage3.viewport.update(width / 4, height / 3, true)
+    }
+
+    override fun dispose() {
+        super.dispose()
+        Main.mainMusic.isLooping = false
+        Main.mainMusic.stop()
     }
 }
