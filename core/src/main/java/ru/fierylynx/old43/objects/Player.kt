@@ -53,7 +53,8 @@ class Player(world: World, position: Vector2, private val scale: Float) : Dispos
         body.userData = "player"
     }
 
-    fun update(delta: Float, enemies: ArrayList<Enemy>) {
+    fun update(delta: Float, enemies: ArrayList<Enemy>): Int {
+        var score = 0
         if (alive) {
             if (timerAttack <= 0.3f) {
                 if (body.linearVelocity.x >= 0) {
@@ -111,13 +112,19 @@ class Player(world: World, position: Vector2, private val scale: Float) : Dispos
 
             timer += delta
 
+
             timerAttack += delta
-            if (Main.controls.attack()) {
+            if (Main.controls.attack() && timerAttack > 0.3f) {
                 timerAttack = 0f
                 for (i in enemies) {
                     if (i.body.position.dst(body.position) < 3f) {
                         i.lives--
                         i.goback = 1f
+
+                        if (i.lives > 0)
+                            score += 50
+                        else if (i.lives == 0)
+                            score += 150
                     }
                 }
             }
@@ -127,6 +134,7 @@ class Player(world: World, position: Vector2, private val scale: Float) : Dispos
             if (lives <= 0)
                 death()
         }
+        return score
     }
 
     fun death() {

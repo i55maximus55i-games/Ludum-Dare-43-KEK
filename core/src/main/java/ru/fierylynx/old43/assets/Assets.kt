@@ -6,5 +6,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont
 class Assets {
     companion object {
         val font = BitmapFont(Gdx.files.internal("fonts/Terrarum_32.fnt"), Gdx.files.internal("fonts/Terrarum_32.png"), false)
+        val anim = Anim("enemy")
     }
 }

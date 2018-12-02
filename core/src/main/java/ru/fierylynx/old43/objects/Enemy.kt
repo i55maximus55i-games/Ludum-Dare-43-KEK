@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.*
 import com.badlogic.gdx.utils.Disposable
 import ru.fierylynx.old43.Main
 import ru.fierylynx.old43.assets.Anim
+import ru.fierylynx.old43.assets.Assets
 
 class Enemy(world: World, position: Vector2, private val scale: Float) : Disposable {
 
@@ -24,13 +25,13 @@ class Enemy(world: World, position: Vector2, private val scale: Float) : Disposa
     var bodies = HashMap<String, Body>()
 
     var goback = 0f
-    var lives = 3
+    var lives = 2
 
     private val width = 16
     private val height = 32
     private val assetScale = 32f
 
-    private val anim = Anim("enemy")
+    private val anim = Assets.anim
     private var selectedAnim = "skibidi"
 
     private var timer = 0f
@@ -53,7 +54,8 @@ class Enemy(world: World, position: Vector2, private val scale: Float) : Disposa
         body.userData = "enemy"
     }
 
-    fun update(delta: Float, player: Player) {
+    fun update(delta: Float, player: Player): Int {
+        var score = 0
         if (alive) {
             val mustJump = if (goback < 0)
                 Math.abs(body.linearVelocity.x) < 4f
@@ -99,6 +101,7 @@ class Enemy(world: World, position: Vector2, private val scale: Float) : Disposa
                     player.lives--
                     goback = 1f
                     Main.hitSound.play()
+                    score -= 200
                 }
             }
             if (body.linearVelocity.x >= 0) {
@@ -130,6 +133,7 @@ class Enemy(world: World, position: Vector2, private val scale: Float) : Disposa
             if (lives <= 0)
                 death()
         }
+        return score
     }
 
     fun death() {
@@ -204,6 +208,6 @@ class Enemy(world: World, position: Vector2, private val scale: Float) : Disposa
     }
 
     override fun dispose() {
-        anim.dispose()
+
     }
 }

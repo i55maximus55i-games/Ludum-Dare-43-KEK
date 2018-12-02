@@ -27,6 +27,8 @@ class MainMenuScreen : KtxScreen {
 
     val start = Texture("start.png")
     val dio = Texture("dio.jpg")
+    val ctrl = Texture("gamepad.png")
+
     lateinit var batch: SpriteBatch
     lateinit var viewport: Viewport
     var startTimer = 0f
@@ -126,7 +128,9 @@ class MainMenuScreen : KtxScreen {
         startTimer += delta
         batch.use {
             if (startTimer % (startDelta * 2) < startDelta)
-                drawTexture(start, 0f, Gdx.graphics.height / 2f, Gdx.graphics.width / 2f, Gdx.graphics.height.toFloat())
+                drawTexture(start, 0f, Gdx.graphics.height / 2f, Gdx.graphics.width / 2f, Gdx.graphics.height.toFloat() * 3 / 4)
+            drawTexture(ctrl, 0f, Gdx.graphics.height * 3 / 4f, Gdx.graphics.width / 2f, Gdx.graphics.height.toFloat())
+
             drawTexture(dio, 0f, 0f, Gdx.graphics.width / 2f, Gdx.graphics.height / 2f)
 
             if (num >= 1) {

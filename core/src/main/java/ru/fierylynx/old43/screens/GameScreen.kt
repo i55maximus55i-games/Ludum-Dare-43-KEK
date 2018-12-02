@@ -4,6 +4,7 @@ import box2dLight.PointLight
 import box2dLight.RayHandler
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.audio.Music
+import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
@@ -53,15 +54,20 @@ class GameScreen : KtxScreen {
     var deathlight = false
     lateinit var deathLight: PointLight
     lateinit var deathMusic: Music
+    lateinit var pushkaSound: Music
 
     var num = 0
     var score = 0
-    var timerSpawnEnemy = 5f
+    var scoreTimer = 4f
+    var timerSpawnEnemy = 10f
+    private var gameoverTimer = 90f
     lateinit var img : BufferedImage
     lateinit var light: PointLight
 
     var enemies = ArrayList<Enemy>()
-    lateinit var label: Label
+    private lateinit var labelLives: Label
+    private lateinit var labelScore: Label
+    private var fuck = true
 
     private var stage = Stage(ScreenViewport())
 
@@ -69,6 +75,7 @@ class GameScreen : KtxScreen {
     var parallaxTexture2 = Texture("BG1.png")
     var parallaxTexture3 = Texture("BG2.png")
     var parallaxTexture4 = Texture("BG3.png")
+
 
     override fun show() {
         map = TmxMapLoader().load("map.tmx")
@@ -89,6 +96,7 @@ class GameScreen : KtxScreen {
             distance = 6f
         }
         deathMusic = Gdx.audio.newMusic(Gdx.files.internal("titanic.mp3"))
+        pushkaSound = Gdx.audio.newMusic(Gdx.files.internal("pushka.mp3"))
 
         camera = OrthographicCamera()
         camera.setToOrtho(false)
@@ -106,8 +114,11 @@ class GameScreen : KtxScreen {
                 setFillParent(true)
                 top()
                 right()
-                label = Label("", Styles.labelWhiteStyle)
-                add(label)
+                labelLives = Label("", Styles.labelWhiteStyle)
+                labelScore = Label("", Styles.labelWhiteStyle)
+                add(labelLives)
+                row()
+                add(labelScore)
             })
         }
 
@@ -154,10 +165,16 @@ class GameScreen : KtxScreen {
 
     override fun render(delta: Float) {
         timerSpawnEnemy += delta
-        player.update(delta, enemies)
+        gameoverTimer -= delta
+        score += player.update(delta, enemies)
+        scoreTimer -= delta
+        if (scoreTimer < 0) {
+            score += 30
+            scoreTimer = 2f
+        }
         world.step(delta, 10, 10)
 
-        if (timerSpawnEnemy > 5f) {
+        if (timerSpawnEnemy > 15f) {
             timerSpawnEnemy = 0f
             for (i in map.layers.get("enemies").objects.getByType(RectangleMapObject::class.java)) {
                 val rect = i.rectangle
@@ -165,7 +182,7 @@ class GameScreen : KtxScreen {
             }
         }
         for (i in enemies)
-            i.update(delta, player)
+            score += i.update(delta, player)
 
         if (player.alive) {
             val camTarget = player.body.position.scl(scale)
@@ -183,7 +200,8 @@ class GameScreen : KtxScreen {
                 }
                 Main.gameMusic.isLooping = false
                 Main.gameMusic.stop()
-                deathMusic.play()
+                if (fuck)
+                    deathMusic.play()
             }
             val camTarget = player.bodies["head"]!!.position.scl(scale)
             val camMove = camTarget.sub(Vector2(camera.position.x, camera.position.y)).scl(0.3f)
@@ -197,6 +215,15 @@ class GameScreen : KtxScreen {
                 Main.setScreen(MainMenuScreen(), 0.2f)
             }
         }
+        if (Main.controls.start() && player.alive)
+            player.death()
+        if (gameoverTimer < 0f && fuck && player.alive) {
+            fuck = false
+            pushkaSound.volume = 0.5f
+            pushkaSound.play()
+        }
+        if (gameoverTimer < -2.6f && player.alive)
+            player.death()
         camera.update()
 
         batch.projectionMatrix = camera.combined
@@ -294,8 +321,11 @@ class GameScreen : KtxScreen {
         camera.position.x *= scale
         camera.position.y *= scale
 
+        if (score < 0)
+            score = 0
         if (player.alive) {
-            label.setText("Lives: ${player.lives}")
+            labelLives.setText("Lives: ${player.lives}")
+            labelScore.setText("Score: $score")
             stage.act()
             stage.draw()
         }
